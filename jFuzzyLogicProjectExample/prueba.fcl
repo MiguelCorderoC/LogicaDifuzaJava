@@ -1,0 +1,76 @@
+/*
+	Example: A tip calculation FIS (fuzzy inference system)
+	Calculates tip based on 'servie' and 'food'
+
+	If you want to about this example (and fuzzy logic), please 
+	read Matlab's tutorial on fuzzy logic toolbox 
+	http://www.mathworks.com/access/helpdesk/help/pdf_doc/fuzzy/fuzzy.pdf
+
+									Pablo Cingolani 
+									pcingola@users.sourceforge.net
+*/
+
+FUNCTION_BLOCK recomendacionrestaurante	// Block definition (there may be more than one block per file)
+
+// Variables linüisticas
+VAR_INPUT				// Define input variables
+	servicio : REAL;
+	comida : REAL;
+    precio : REAL;
+    reputacion : REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	recomendacion : REAL;
+END_VAR
+
+// Funciones de Servicio
+FUZZIFY servicio			// Fuzzify input variable 'servicio': {'malo', 'regular' , 'bueno'} en escala del 0-9
+	TERM malo := (0, 1) (4, 0) ; 
+	TERM regular := (3, 0) (4,1) (6,1) (7,0);
+	TERM bueno := (6, 0) (9, 1);
+END_FUZZIFY
+
+// Funciones de Comida
+FUZZIFY comida			// Fuzzify input variable 'comida': {'asquerosa', 'normal' , 'sabrosa'} en escala del 0-9
+	TERM asquerosa := (0, 1) (4, 0) ; 
+	TERM normal := (3, 0) (5,1) (7,0);
+	TERM sabrosa := (6, 0) (9, 1);
+END_FUZZIFY
+
+// Funciones de Precio
+FUZZIFY precio			// Fuzzify input variable 'precio': {'caro', 'pagable' , 'accesible' , 'regalado'} en escala del 0-9
+	TERM caro := (0, 1) (1, 1) (3, 0) ; 
+	TERM pagable := (2, 0) (3,1) (4,1) (5, 0);
+    TERM accesible := (4, 0) (6, 1) (8, 0);
+	TERM regalado := (7, 0) (8, 1) (9, 1);
+END_FUZZIFY
+
+// Funciones de Reputacion
+FUZZIFY reputacion			// Fuzzify input variable 'reputacion': {'mala', 'normal' , 'buena'} en escala del 0-5 estrellas
+	TERM mala := (0, 1) (3, 0) ; 
+	TERM normal := (2, 0) (3,1) (4, 0);
+    TERM buena := (3, 0) (5, 1);
+END_FUZZIFY
+
+// Funciones de recomendacion y metodo de defuzzificacion
+DEFUZZIFY recomendacion			// Defzzzify output variable 'recomendacion' : {'no_recomendable', 'algo_recomendable', 'recomendable' } de 0-10
+	TERM no_recomendable := (0,1) (2,1) (5,0);
+	TERM algo_recomendable := (4,0) (5,1) (7,1) (8,0);
+	TERM recomendable := (6,0) (8,1) (10,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+// Reglas
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+    RULE 1 : IF servicio IS malo AND comida IS asquerosa AND precio IS caro OR precio IS pagable AND reputacion IS mala OR reputacion IS normal THEN recomendacion IS no_recomendable;
+    RULE 2 : IF servicio IS regular AND comida IS normal AND precio IS pagable OR precio IS accesible AND reputacion IS normal OR reputacion IS buena THEN recomendacion IS algo_recomendable;
+    RULE 3 : IF servicio IS bueno  AND comida IS normal OR comida IS sabrosa AND precio IS accesible OR precio IS regalado AND reputacion IS buena THEN recomendacion IS recomendable;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
