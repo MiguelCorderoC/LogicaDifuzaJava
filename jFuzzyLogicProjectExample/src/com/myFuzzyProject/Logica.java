@@ -18,6 +18,7 @@ public class Logica {
         double comida = 0;
         double precio = 0;
         double reputacion = 0;
+        String respuesta = "";
 
         // Convierto los textos a datos tipo Double
         try {
@@ -61,7 +62,16 @@ public class Logica {
         System.out.println("recomendacion: " + fb.getVariable("recomendacion").getValue());
 
         // Retorno el resultado de todo para mostrarlo en el campo de texto Resultado
-        return " " + fb.getVariable("recomendacion").getValue();
+        if (fb.getVariable("recomendacion").getValue() >= 0 && fb.getVariable("recomendacion").getValue() <= 5) {
+            respuesta = "NO RECOMENDABLE";
+        }
+        if (fb.getVariable("recomendacion").getValue() >= 4 && fb.getVariable("recomendacion").getValue() <= 8) {
+            respuesta = "ALGO RECOMENDABLE";
+        }
+        if (fb.getVariable("recomendacion").getValue() >= 6 && fb.getVariable("recomendacion").getValue() <= 10) {
+            respuesta = "RECOMENDABLE";
+        }
+        return respuesta;
     }
 
     // Funcion para obtener las graficas
@@ -109,7 +119,8 @@ public class Logica {
         System.out.println(fis);
     }
 
-    public static void historial(String txtServicio, String txtComida, String txtPrecio, String txtReputacion,
+    public static void historial(String txtNombre, String txtServicio, String txtComida, String txtPrecio,
+            String txtReputacion,
             String txtResultado) {
         double servicio = 0;
         double comida = 0;
@@ -127,7 +138,7 @@ public class Logica {
             JOptionPane.showMessageDialog(null, "Por favor ingresa numeros enteros");
         }
 
-        Datos dato = new Datos(servicio, comida, precio, reputacion, txtResultado);
+        Datos dato = new Datos(txtNombre, servicio, comida, precio, reputacion, txtResultado);
         arrayHistorial.add(dato);
         // JOptionPane.showMessageDialog(null, "Objeto guardadi con exito");
     }

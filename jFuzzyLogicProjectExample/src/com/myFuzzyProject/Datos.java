@@ -2,18 +2,28 @@ package com.myFuzzyProject;
 
 // Esta clase es solo para crear objetos que almacenarán los datos del historial de las predicciones hechas
 public class Datos {
+    private String nombre;
     private double servicio;
     private double comida;
     private double precio;
     private double reputacion;
     private String resultado;
 
-    public Datos(double servicio, double comida, double precio, double reputacion, String resultado) {
+    public Datos(String nombre, double servicio, double comida, double precio, double reputacion, String resultado) {
+        this.nombre = nombre;
         this.servicio = servicio;
         this.comida = comida;
         this.precio = precio;
         this.reputacion = reputacion;
         this.resultado = resultado;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     // Métodos get y set para el campo "servicio"

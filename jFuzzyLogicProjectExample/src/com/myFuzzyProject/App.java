@@ -12,12 +12,15 @@ public class App extends JFrame implements ActionListener {
 
     ArrayList<Datos> historial = Logica.arrayHistorial;
     JPanel pnlPrincipal = new JPanel();
+    JPanelPersonalizado pnlDatos1 = new JPanelPersonalizado("Datos:");
+    JPanelPersonalizado pnlOpciones1 = new JPanelPersonalizado("Opciones:");
     JPanelPersonalizado pnlDatos = new JPanelPersonalizado("Datos:");
-    JPanelPersonalizado pnlOpciones = new JPanelPersonalizado("Opciones");
-    JPanelPersonalizado pnlConsulta = new JPanelPersonalizado("Consulta");
+    JPanelPersonalizado pnlOpciones = new JPanelPersonalizado("Opciones:");
+    JPanelPersonalizado pnlConsulta = new JPanelPersonalizado("Historial:");
     JButton btnPredecir = new JButton("Predecir");
     JButton btnGraficar = new JButton("Graficar");
     JButton btnHistorial = new JButton("Guardar");
+    JTextArea txtNombre = new JTextArea();
     JTextArea txtServicio = new JTextArea();
     JTextArea txtComida = new JTextArea();
     JTextArea txtPrecio = new JTextArea();
@@ -44,6 +47,9 @@ public class App extends JFrame implements ActionListener {
     }
 
     private void initComponents() {
+
+        txtResultado.setEditable(false);
+
         // Configuracion de botones
         btnPredecir.setForeground(Color.WHITE);
         btnPredecir.setBackground(Color.decode("#124076"));
@@ -59,10 +65,14 @@ public class App extends JFrame implements ActionListener {
         btnGraficar.setFont(font);
 
         // Configuracion del panel Datos
-        Border borderDatos = BorderFactory.createEmptyBorder(20, 50, 20, 50);
+        Border borderDatos = BorderFactory.createEmptyBorder(10, 70, 10, 70);
+        pnlDatos1.setBackground(Color.white);
+        pnlOpciones1.setBackground(Color.white);
         pnlDatos.setBorder(borderDatos);
         pnlDatos.setBackground(Color.white);
-        pnlDatos.setLayout(new GridLayout(10, 1));
+        pnlDatos.setLayout(new GridLayout(12, 1));
+        pnlDatos.add(JTextBoxPersonalizado.createLabel("Nombre:"));
+        pnlDatos.add(JTextBoxPersonalizado.createBorderedTextArea(txtNombre));
         pnlDatos.add(JTextBoxPersonalizado.createLabel("Servicio (0 - 9):"));
         pnlDatos.add(JTextBoxPersonalizado.createBorderedTextArea(txtServicio));
         pnlDatos.add(JTextBoxPersonalizado.createLabel("Comida (0 - 9):"));
@@ -75,6 +85,7 @@ public class App extends JFrame implements ActionListener {
         pnlDatos.add(JTextBoxPersonalizado.createBorderedTextArea(txtResultado));
 
         // configuracion del panel de opciones
+        pnlOpciones.setBackground(Color.white);
         pnlOpciones.setBorder(borderDatos);
         pnlOpciones.setLayout(new GridLayout(7, 1));
         pnlOpciones.add(new Label());
@@ -91,6 +102,7 @@ public class App extends JFrame implements ActionListener {
 
         // Crear modelo de tabla
         DefaultTableModel modeloTabla = new DefaultTableModel();
+        modeloTabla.addColumn("Nombre");
         modeloTabla.addColumn("Servicio");
         modeloTabla.addColumn("Comida");
         modeloTabla.addColumn("Precio");
@@ -110,11 +122,12 @@ public class App extends JFrame implements ActionListener {
                                                                      // "Grafica"
                     // Obtener valores de la fila seleccionada
                     DefaultTableModel modeloTabla = (DefaultTableModel) tablaConsulta.getModel();
-                    Object servicioObj = modeloTabla.getValueAt(fila, 0);
-                    Object comidaObj = modeloTabla.getValueAt(fila, 1);
-                    Object precioObj = modeloTabla.getValueAt(fila, 2);
-                    Object reputacionObj = modeloTabla.getValueAt(fila, 3);
-                    Object resultadoObj = modeloTabla.getValueAt(fila, 4);
+                    // Object nombreObj = modeloTabla.getValueAt(fila, 0);
+                    Object servicioObj = modeloTabla.getValueAt(fila, 1);
+                    Object comidaObj = modeloTabla.getValueAt(fila, 2);
+                    Object precioObj = modeloTabla.getValueAt(fila, 3);
+                    Object reputacionObj = modeloTabla.getValueAt(fila, 4);
+                    Object resultadoObj = modeloTabla.getValueAt(fila, 5);
 
                     // Convertir los valores a String
                     String servicio = servicioObj.toString();
@@ -145,8 +158,12 @@ public class App extends JFrame implements ActionListener {
 
         // Configuracion del panel principal
         pnlPrincipal.setLayout(new GridLayout(1, 2));
-        pnlPrincipal.add(pnlDatos);
-        pnlPrincipal.add(pnlOpciones);
+        pnlPrincipal.add(pnlDatos1);
+        pnlPrincipal.add(pnlOpciones1);
+        pnlOpciones1.setLayout(new GridLayout(1, 1));
+        pnlDatos1.setLayout(new GridLayout(1, 1));
+        pnlDatos1.add(pnlDatos);
+        pnlOpciones1.add(pnlOpciones);
     }
 
     public static void main(String[] args) {
@@ -163,7 +180,7 @@ public class App extends JFrame implements ActionListener {
             Logica.grafica(txtServicio.getText(), txtComida.getText(), txtPrecio.getText(), txtReputacion.getText());
         }
         if (e.getSource() == btnHistorial) {
-            Logica.historial(txtServicio.getText(), txtComida.getText(), txtPrecio.getText(),
+            Logica.historial(txtNombre.getText(), txtServicio.getText(), txtComida.getText(), txtPrecio.getText(),
                     txtReputacion.getText(), txtResultado.getText());
             cargarHistorialEnTabla(); // Llama al método para cargar el historial en la tabla
         }
@@ -174,7 +191,7 @@ public class App extends JFrame implements ActionListener {
         modeloTabla.setRowCount(0); // Limpia la tabla antes de llenarla con nuevos datos
 
         for (Datos dato : historial) {
-            modeloTabla.addRow(new Object[] { dato.getServicio(), dato.getComida(), dato.getPrecio(),
+            modeloTabla.addRow(new Object[] { dato.getNombre(), dato.getServicio(), dato.getComida(), dato.getPrecio(),
                     dato.getReputacion(), dato.getResultado(), "Grafica" });
         }
 

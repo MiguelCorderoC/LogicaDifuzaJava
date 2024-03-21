@@ -58,7 +58,7 @@ DEFUZZIFY recomendacion			// Defzzzify output variable 'recomendacion' : {'no_re
 	TERM no_recomendable := (0,1) (2,1) (5,0);
 	TERM algo_recomendable := (4,0) (5,1) (7,1) (8,0);
 	TERM recomendable := (6,0) (8,1) (10,1);
-	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	METHOD : COA;		// Use 'Center Of Area' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
@@ -68,9 +68,13 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-    RULE 1 : IF servicio IS malo AND comida IS asquerosa AND precio IS caro OR precio IS pagable AND reputacion IS mala OR reputacion IS normal THEN recomendacion IS no_recomendable;
-    RULE 2 : IF servicio IS regular AND comida IS normal AND precio IS pagable OR precio IS accesible AND reputacion IS normal OR reputacion IS buena THEN recomendacion IS algo_recomendable;
-    RULE 3 : IF servicio IS bueno  AND comida IS normal OR comida IS sabrosa AND precio IS accesible OR precio IS regalado AND reputacion IS buena THEN recomendacion IS recomendable;
+    RULE 1 : IF servicio IS malo OR comida IS asquerosa OR precio IS caro OR reputacion IS mala THEN recomendacion IS no_recomendable;
+	RULE 2 : IF servicio IS malo OR comida IS asquerosa OR precio IS pagable OR reputacion IS mala THEN recomendacion IS no_recomendable;
+	RULE 3 : IF servicio IS regular OR comida IS normal OR precio IS pagable OR reputacion IS normal THEN recomendacion IS algo_recomendable;
+	RULE 4 : IF servicio IS regular OR comida IS normal OR precio IS accesible OR reputacion IS normal THEN recomendacion IS algo_recomendable;
+	RULE 5 : IF servicio IS bueno OR comida IS sabrosa OR precio IS accesible OR reputacion IS buena THEN recomendacion IS recomendable;
+	RULE 6 : IF servicio IS bueno OR comida IS sabrosa OR precio IS regalado OR reputacion IS buena THEN recomendacion IS recomendable;
+
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
